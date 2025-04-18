@@ -4,28 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Product Sales Dashboard</title>
-  
-  <!-- Using unpkg for all libraries - it's more reliable for GitHub Pages -->
-  <script crossorigin src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
-  
-  <!-- Load Recharts dependencies -->
-  <script src="https://unpkg.com/prop-types@15.7.2/prop-types.min.js"></script>
-  <script src="https://unpkg.com/d3-array@2.12.1/dist/d3-array.min.js"></script>
-  <script src="https://unpkg.com/d3-scale@3.3.0/dist/d3-scale.min.js"></script>
-  <script src="https://unpkg.com/d3-shape@2.1.0/dist/d3-shape.min.js"></script>
-  <script src="https://unpkg.com/d3-color@2.0.0/dist/d3-color.min.js"></script>
-  <script src="https://unpkg.com/d3-interpolate@2.0.1/dist/d3-interpolate.min.js"></script>
-  <script src="https://unpkg.com/d3-format@2.0.0/dist/d3-format.min.js"></script>
-  <script src="https://unpkg.com/d3-time@2.1.1/dist/d3-time.min.js"></script>
-  <script src="https://unpkg.com/d3-time-format@3.0.0/dist/d3-time-format.min.js"></script>
-  
-  <!-- Load Recharts after its dependencies -->
-  <script src="https://unpkg.com/recharts@2.1.9/umd/Recharts.min.js"></script>
-  
-  <!-- Babel for JSX transformation -->
-  <script src="https://unpkg.com/@babel/standalone@7.17.6/babel.min.js"></script>
-
+  <!-- Add some basic styling -->
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -130,98 +109,23 @@
     .mt-6 {
       margin-top: 24px;
     }
-    .p-4 {
-      padding: 16px;
-    }
-    .text-center {
-      text-align: center;
-    }
-    .text-xl {
-      font-size: 1.25rem;
-    }
-    .font-bold {
-      font-weight: 700;
-    }
-    .text-lg {
-      font-size: 1.125rem;
-    }
-    .font-semibold {
-      font-weight: 600;
-    }
-    .mb-2 {
-      margin-bottom: 8px;
-    }
-    .error-container {
-      color: red;
-      padding: 20px;
-      text-align: center;
-      border: 1px solid red;
-      border-radius: 4px;
-      margin: 20px auto;
-      max-width: 800px;
-    }
-    .loading-container {
-      text-align: center;
-      padding: 40px;
-    }
-    .loading-spinner {
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #3498db;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 2s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
   </style>
+  
+  <!-- Load React, React DOM, and Recharts via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.5/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.7.2/Recharts.min.js"></script>
 </head>
 <body>
   <div id="root" class="dashboard-container">
-    <div class="loading-container">
-      <h2>Loading sales dashboard...</h2>
-      <div class="loading-spinner"></div>
-      <p>Please wait while we load the data.</p>
+    <div style="text-align: center; padding: 40px;">
+      <h2>Loading sales data...</h2>
+      <p>Please wait while we load the dashboard.</p>
     </div>
   </div>
 
-  <script>
-    // Check if libraries loaded properly
-    window.addEventListener('DOMContentLoaded', function() {
-      if (!window.React || !window.ReactDOM || !window.Recharts) {
-        document.getElementById('root').innerHTML = `
-          <div class="error-container">
-            <h2>Error Loading Required Libraries</h2>
-            <p>Some required JavaScript libraries failed to load properly.</p>
-            <p>Please check your internet connection and refresh the page.</p>
-            <p>If the problem persists, try opening the browser console (F12) for more details.</p>
-          </div>
-        `;
-      } else {
-        console.log("Libraries loaded successfully:");
-        console.log("- React:", React.version);
-        console.log("- ReactDOM:", ReactDOM.version);
-        console.log("- Recharts is available:", !!Recharts);
-        
-        // Load our dashboard script after confirming libraries are loaded
-        var script = document.createElement('script');
-        script.src = 'dashboard.js';
-        script.type = 'text/babel';
-        script.onerror = function() {
-          document.getElementById('root').innerHTML = `
-            <div class="error-container">
-              <h2>Error Loading Dashboard Script</h2>
-              <p>The dashboard.js script could not be loaded.</p>
-              <p>Please check that the file exists and is accessible.</p>
-            </div>
-          `;
-        };
-        document.body.appendChild(script);
-      }
-    });
-  </script>
+  <!-- Load the dashboard code -->
+  <script type="text/babel" src="dashboard.js"></script>
 </body>
 </html>
