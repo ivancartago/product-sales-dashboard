@@ -28,6 +28,7 @@
                     <option value="yearly">By Year</option>
                     <option value="monthly">By Month</option>
                     <option value="platform">By Platform</option>
+                    <option value="monthly-comparison">Month Comparison</option>
                 </select>
             </div>
             
@@ -89,6 +90,18 @@
                     <div class="chart-wrapper mt-large">
                         <h3 class="chart-title">Total Sales by Platform</h3>
                         <canvas id="platform-total-chart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Monthly Comparison view charts -->
+                <div id="monthly-comparison-view" class="chart-container hidden">
+                    <h3 class="chart-title">Monthly Sales Comparison Across Years</h3>
+                    <div id="monthly-comparison-empty-message" class="message hidden">No data available for monthly comparison with the selected parameters.</div>
+                    <div class="chart-wrapper">
+                        <canvas id="monthly-comparison-chart"></canvas>
+                    </div>
+                    <div class="mt-2">
+                        <p class="chart-subtitle">This chart shows how sales in each month compare across different years. Solid lines represent physical products, dashed lines represent digital sales when applicable.</p>
                     </div>
                 </div>
             </div>
