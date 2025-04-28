@@ -37,6 +37,12 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.chart-subtitle {
+    font-size: 0.875rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
 /* Controls */
 .control-panel {
     margin-bottom: 1rem;
@@ -130,6 +136,10 @@ body {
 
 .mt-large {
     margin-top: 1.5rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
 }
 
 /* Tables */
