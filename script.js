@@ -1474,16 +1474,36 @@ function openFullscreenChart(sourceCanvas, title) {
             existingChart.destroy();
         }
         
-        // Create new chart with same config
-        new Chart(fullscreenCanvas, {
+        // Clone configuration but handle tooltip callbacks properly
+        const newConfig = {
             type: sourceChart.config.type,
             data: JSON.parse(JSON.stringify(sourceChart.data)),
-            options: {
-                ...JSON.parse(JSON.stringify(sourceChart.config.options)),
-                maintainAspectRatio: false,
-                responsive: true
+            options: JSON.parse(JSON.stringify(sourceChart.config.options))
+        };
+        
+        // Ensure responsive settings
+        newConfig.options.maintainAspectRatio = false;
+        newConfig.options.responsive = true;
+        
+        // Preserve tooltip callbacks for monthly data
+        if (sourceChart.config.options?.plugins?.tooltip?.callbacks) {
+            // Make sure plugin and tooltip objects exist
+            if (!newConfig.options.plugins) newConfig.options.plugins = {};
+            if (!newConfig.options.plugins.tooltip) newConfig.options.plugins.tooltip = {};
+            if (!newConfig.options.plugins.tooltip.callbacks) newConfig.options.plugins.tooltip.callbacks = {};
+            
+            // Copy the original callback functions directly (not through JSON serialization)
+            const sourceCallbacks = sourceChart.config.options.plugins.tooltip.callbacks;
+            if (sourceCallbacks.title) {
+                newConfig.options.plugins.tooltip.callbacks.title = sourceCallbacks.title;
             }
-        });
+            if (sourceCallbacks.label) {
+                newConfig.options.plugins.tooltip.callbacks.label = sourceCallbacks.label;
+            }
+        }
+        
+        // Create new chart with properly preserved config
+        new Chart(fullscreenCanvas, newConfig);
     }
     
     // Show fullscreen overlay
@@ -1507,3 +1527,67 @@ document.addEventListener('DOMContentLoaded', function() {
     // Wait a bit to ensure charts are rendered first
     setTimeout(initializeFullscreenFeature, 500);
 });
+
+// Add fullscreen functionality to the dashboard
+function initializeFullscreenFeature() {
+    // Create fullscreen overlay
+    const fullscreenOverlay = document.createElement('div');
+    fullscreenOverlay.className = 'fullscreen-overlay';
+    fullscreenOverlay.innerHTML = `
+        <div class="fullscreen-title">Chart Fullscreen View</div>
+        <div class="fullscreen-chart-container">
+            <canvas id="fullscreen-chart"></canvas>
+            <div class="fullscreen-close" title="Close fullscreen">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(fullscreenOverlay);
+
+    // Add fullscreen buttons to chart wrappers (except pie chart)
+    document.querySelectorAll('.chart-wrapper').forEach((wrapper, index) => {
+        // Skip the pie chart
+        if (wrapper.querySelector('#pie-chart')) {
+            return;
+        }
+        
+        const button = document.createElement('div');
+        button.className = 'fullscreen-button';
+        button.title = 'View fullscreen';
+        button.setAttribute('data-chart-index', index);
+        button.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+            </svg>
+        `;
+        wrapper.appendChild(button);
+    });
+
+    // Set up event listeners
+    document.addEventListener('click', function(e) {
+        // Check if fullscreen button is clicked
+        if (e.target.closest('.fullscreen-button')) {
+            const button = e.target.closest('.fullscreen-button');
+            const wrapper = button.closest('.chart-wrapper');
+            const chartCanvas = wrapper.querySelector('canvas');
+            const chartTitle = wrapper.closest('.chart-container').querySelector('.chart-title').textContent;
+            
+            // Show fullscreen view with the selected chart
+            openFullscreenChart(chartCanvas, chartTitle);
+        }
+        
+        // Check if close button is clicked
+        if (e.target.closest('.fullscreen-close')) {
+            closeFullscreenChart();
+        }
+    });
+
+    // Close fullscreen when ESC key is pressed
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && fullscreenOverlay.classList.contains('active')) {
+            closeFullscreenChart();
+        }
+    });
+}
